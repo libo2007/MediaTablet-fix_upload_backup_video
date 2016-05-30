@@ -31,13 +31,14 @@ public class ScanBackupVideoService extends Service {
     private static final String TAG = "ScanBackupVideoService";
     private Handler mHandler = null;
     private HandlerThread mHandlerThread = null;
-    private DealBackupVideoRunnable mDealBackupVideoRunnable = null;
+    private DealBackupVideoTask mDealBackupVideoTask = null;
 
     //立即扫描
     private static final int MSG_SCAN_NOW = 1001;
     //等5分钟扫描
     private static final int MSG_SCAN_DELAY = 1002;
     private static final int TIME_5_MINUTE = 5 * 60 * 1000;
+    private static final int TIME_3_SECOND = 3 * 1000;
 
     //传送结果
     private String resultStr;
@@ -55,10 +56,10 @@ public class ScanBackupVideoService extends Service {
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case MSG_SCAN_DELAY:
-                        mHandler.post(mDealBackupVideoRunnable);
+                        mHandler.postDelayed(mDealBackupVideoTask, TIME_5_MINUTE);
                         break;
                     case MSG_SCAN_NOW:
-                        mHandler.post(mDealBackupVideoRunnable);
+                        mHandler.postDelayed(mDealBackupVideoTask, TIME_3_SECOND);
                         break;
 
                     default:
@@ -67,8 +68,8 @@ public class ScanBackupVideoService extends Service {
 
             }
         };
-        mDealBackupVideoRunnable = new DealBackupVideoRunnable();
-        mHandler.post(mDealBackupVideoRunnable);
+        mDealBackupVideoTask = new DealBackupVideoTask();
+        mHandler.post(mDealBackupVideoTask);
     }
 
     @Nullable
@@ -87,10 +88,10 @@ public class ScanBackupVideoService extends Service {
     }
 
     private void stopHandlerThread() {
-        if (mHandler != null && mDealBackupVideoRunnable != null) {
-            mHandler.removeCallbacks(mDealBackupVideoRunnable);
+        if (mHandler != null && mDealBackupVideoTask != null) {
+            mHandler.removeCallbacks(mDealBackupVideoTask);
             mHandler = null;
-            mDealBackupVideoRunnable = null;
+            mDealBackupVideoTask = null;
         }
         if (mHandlerThread != null) {
             mHandlerThread.quit();
@@ -99,7 +100,7 @@ public class ScanBackupVideoService extends Service {
     }
 
 
-    private class DealBackupVideoRunnable implements Runnable {
+    private class DealBackupVideoTask implements Runnable {
 
         @Override
         public void run() {
@@ -108,7 +109,7 @@ public class ScanBackupVideoService extends Service {
             if (backupFileList == null || backupFileList.isEmpty()) {
                 //等5分钟再次发送扫描请求
                 MyLog.e(TAG, "backup目录下不存在视频文件");
-                mHandler.sendEmptyMessageDelayed(MSG_SCAN_DELAY, TIME_5_MINUTE);
+                mHandler.sendEmptyMessage(MSG_SCAN_DELAY);
             } else {
                 //向服务器传送文件
                 MyLog.e(TAG, "backup目录下存在视频文件：" + backupFileList.get(0).getPlay_url());
@@ -129,7 +130,7 @@ public class ScanBackupVideoService extends Service {
             } else {
                 if ((System.currentTimeMillis() - start) < 2 * 60 * 1000) {
                     Log.e(TAG, "视频文件不存在,因为时间问题");
-                    mHandler.sendEmptyMessageDelayed(MSG_SCAN_DELAY, TIME_5_MINUTE);
+                    mHandler.sendEmptyMessage(MSG_SCAN_DELAY);
                     return;
                 }
             }
@@ -178,7 +179,7 @@ public class ScanBackupVideoService extends Service {
                 e.printStackTrace();
             } finally {
                 //这里考虑到无法连接ftp的时候传输失败，避免反复传输造成浪费
-                mHandler.sendEmptyMessageDelayed(MSG_SCAN_DELAY,TIME_5_MINUTE);
+                mHandler.sendEmptyMessage(MSG_SCAN_NOW);
             }
         }
     }
