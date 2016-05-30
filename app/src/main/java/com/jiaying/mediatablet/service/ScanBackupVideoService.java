@@ -114,7 +114,8 @@ public class ScanBackupVideoService extends Service {
             } else {
                 //向服务器传送文件
                 MyLog.e(TAG, "backup目录下存在视频文件：" + backupFileList.get(0).getPlay_url());
-                upLoadVideo(backupFileList.get(0).getPlay_url(), SelfFile.generateRemoteVideoName());
+                String backFilePath = backupFileList.get(0).getPlay_url();
+                upLoadVideo(backFilePath, SelfFile.getRemoteVideoNamePrefix() + backFilePath);
             }
         }
     }
@@ -130,7 +131,7 @@ public class ScanBackupVideoService extends Service {
                 break;
             } else {
                 if ((System.currentTimeMillis() - start) < 2 * 60 * 1000) {
-                    Log.e(TAG, "视频文件不存在,因为时间问题");
+                    Log.e(TAG, "视频文件不存在...");
                     mHandler.sendEmptyMessage(MSG_SCAN_DELAY);
                     return;
                 }

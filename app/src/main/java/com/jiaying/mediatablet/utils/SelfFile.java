@@ -95,9 +95,12 @@ public class SelfFile {
         dfs2.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
 
 
-        return "[ShareFtp]jzVideo" + dfs1.format(TimeRecord.getInstance().getStartDate()) + dfs2.format(TimeRecord.getInstance().getEndDate()) + fileEx;
+        return getRemoteVideoNamePrefix() + dfs1.format(TimeRecord.getInstance().getStartDate()) + dfs2.format(TimeRecord.getInstance().getEndDate()) + fileEx;
     }
 
+    public static String getRemoteVideoNamePrefix(){
+        return "[ShareFtp]jzVideo";
+    }
     public static String generateLocalBackupVideoName() {
         SimpleDateFormat dfs1 = new SimpleDateFormat("yyyy_MM_dd_" + DonorEntity.getInstance().getIdentityCard().getId() + "[HH-mm-ss]");
         SimpleDateFormat dfs2 = new SimpleDateFormat("[HH-mm-ss]");
