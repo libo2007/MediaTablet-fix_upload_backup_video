@@ -24,7 +24,6 @@ import com.cylinder.www.hardware.RecorderManager;
 
 import com.jiaying.mediatablet.entity.CurrentDate;
 
-import com.jiaying.mediatablet.service.ScanBackupVideoService;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
@@ -133,7 +132,6 @@ public class FdAuthCameraView extends JavaCameraView {
                 recorder = null;
 
                 new SendVideoThread(filePath, SelfFile.generateRemoteVideoName() + ".auth").start();
-                startScanBackupVideoService();
             }
         }
         super.disableView();
@@ -142,10 +140,7 @@ public class FdAuthCameraView extends JavaCameraView {
     public Camera getCamera() {
         return mCamera;
     }
-    private void startScanBackupVideoService(){
-        Intent it = new Intent(context, ScanBackupVideoService.class);
-        context.startService(it);
-    }
+
     public int getSelfPaintWidth() {
         if (selfCacheBitmap != null) {
             return selfCacheBitmap.getWidth();

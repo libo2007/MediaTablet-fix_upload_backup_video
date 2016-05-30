@@ -275,6 +275,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         filter.addAction(IntentAction.ACTION_UPDATE_TIME);
         registerReceiver(receiver, filter);
         startTimeService();
+        startScanBackupVideoService();
         forbidLockScreen();
     }
 
@@ -1360,6 +1361,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startService(it);
     }
 
+    private void startScanBackupVideoService() {
+        Intent it = new Intent(MainActivity.this, ScanBackupVideoService.class);
+        startService(it);
+    }
 
     private String timeStamp2Date(String seconds) {
         if (TextUtils.isEmpty(seconds)) {

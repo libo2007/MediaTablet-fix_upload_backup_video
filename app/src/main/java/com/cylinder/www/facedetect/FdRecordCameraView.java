@@ -18,7 +18,6 @@ import com.cylinder.www.hardware.RecorderManager;
 import com.jiaying.mediatablet.entity.CurrentDate;
 
 import com.jiaying.mediatablet.entity.TempVideo;
-import com.jiaying.mediatablet.service.ScanBackupVideoService;
 import com.jiaying.mediatablet.thread.SendVideoThread;
 import com.jiaying.mediatablet.utils.SelfFile;
 import com.jiaying.mediatablet.utils.TimeRecord;
@@ -128,15 +127,12 @@ public class FdRecordCameraView extends JavaCameraView {
                 TempVideo.lpath = filePath;
 
                 new SendVideoThread(filePath, SelfFile.generateRemoteVideoName()).start();
-                startScanBackupVideoService();
+
             }
         }
         super.disableView();
     }
-    private void startScanBackupVideoService(){
-        Intent it = new Intent(context, ScanBackupVideoService.class);
-        context.startService(it);
-    }
+
     public Camera getCamera() {
         return mCamera;
     }

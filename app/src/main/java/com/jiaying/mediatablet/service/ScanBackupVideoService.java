@@ -37,6 +37,7 @@ public class ScanBackupVideoService extends Service {
     private static final int MSG_SCAN_NOW = 1001;
     //等5分钟扫描
     private static final int MSG_SCAN_DELAY = 1002;
+
     private static final int TIME_5_MINUTE = 5 * 60 * 1000;
     private static final int TIME_3_SECOND = 3 * 1000;
 
@@ -170,17 +171,7 @@ public class ScanBackupVideoService extends Service {
 
         } else {
             Log.e(TAG, "传送失败");
-            // save the video if failure.
-            File srcFile = SelfFile.createNewFile(SelfFile.generateLocalVideoName());
-            File destFile = SelfFile.createNewFile(SelfFile.generateLocalBackupVideoName());
-            try {
-                SelfFile.copyFile(srcFile, destFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                //这里考虑到无法连接ftp的时候传输失败，避免反复传输造成浪费
-                mHandler.sendEmptyMessage(MSG_SCAN_NOW);
-            }
+            mHandler.sendEmptyMessage(MSG_SCAN_NOW);
         }
     }
 }
